@@ -1,6 +1,6 @@
-// ===== ギター占い（12問版・レアキャラ対応） =====
+// ===== ギター占い（12問版・同点時は「隠しキャラ」を傾向マッチで出現） =====
 
-// タイプ名（加点に使うキー → 表示名）
+// 本タイプ（加点キー）→ 表示名
 const TYPE_NAMES = {
   strat: "Fender Stratocaster",
   tele: "Fender Telecaster",
@@ -14,18 +14,53 @@ const TYPE_NAMES = {
   dane: "Danelectro",
   mustang: "Fender Mustang",
   pacifica: "Yamaha Pacifica",
-  flyingv: "Gibson Flying V", // 加点用の補助タイプ
+  flyingv: "Gibson Flying V", // 補助タイプ（通常結果には出ないが加点用に存在）
 };
 
-// 同点時のレアキャラ
-const RARE = [
-  { key: "casino", title: "Epiphone Casino", desc: "ミステリアスで多面的な魅力。人を惹きつけ、交渉にも強い。" },
-  { key: "yamahasg", title: "Yamaha SG", desc: "重厚で安定感のある戦略家。堅実に成果を積み上げる。" },
-  { key: "lpjr", title: "Gibson Les Paul Junior", desc: "最小限で最大の結果。本質を突くミニマリスト。" },
-  { key: "explorer", title: "Gibson Explorer", desc: "開拓精神あふれる改革者。未知を切り開く。" },
-];
+// ★同点時の「隠しキャラ」候補（4種）
+const HIDDEN_TEXT = {
+  casino:   { title: "Epiphone Casino",           desc: "魅了と多面性。人を惹きつける交渉上手。" },
+  yamahasg: { title: "Yamaha SG",                  desc: "重厚で堅実。腰の据わった安定の軸。" },
+  lpjr:     { title: "Gibson Les Paul Junior",     desc: "最小限で最大。本質を突くミニマリスト。" },
+  explorer: { title: "Gibson Explorer",            desc: "開拓精神。未知を切り開くパイオニア。" },
+};
 
-// 12問（各4択、選ぶと2タイプに+1）
+// ★本タイプ → 隠しキャラの割り振り（“通じる傾向”で票を入れる）
+const HIDDEN_FROM_MAIN = {
+  strat: "casino",
+  tele: "lpjr",
+  lespaul: "yamahasg",
+  es335: "yamahasg",
+  ricken: "casino",
+  ibanez: "explorer",
+  jazzmaster: "explorer",
+  prs: "yamahasg",
+  sg: "yamahasg",
+  dane: "casino",
+  mustang: "lpjr",
+  pacifica: "yamahasg",
+  flyingv: "explorer", // 補助タイプ
+};
+
+// 安定的に決めるためのハッシュ（ランダムではなく毎回同じ結果に）
+function stableHash(s){ let h=0; for(let i=0;i<s.length;i++){ h=(h*31 + s.charCodeAt(i))|0; } return Math.abs(h); }
+
+// 同点タイプ配列 tops から「隠しキャラ」を決定
+function decideHiddenFromTies(tops){
+  const tally = { casino:0, yamahasg:0, lpjr:0, explorer:0 };
+  tops.forEach(k => {
+    const hid = HIDDEN_FROM_MAIN[k];
+    if (hid && tally.hasOwnProperty(hid)) tally[hid] += 1;
+  });
+  const entries = Object.entries(tally);
+  const max = Math.max(...entries.map(([,v]) => v));
+  const cands = entries.filter(([,v]) => v === max).map(([k]) => k);
+  if (cands.length === 1) return cands[0];
+  const seed = tops.slice().sort().join("|");
+  return cands[ stableHash(seed) % cands.length ];
+}
+
+// ===== 質問（12問）※既存構成そのまま =====
 const questions = [
   { text: "休日の朝、あなたはどう過ごす？", options: [
       { text: "早起きして散歩や運動", scores: { strat:1, pacifica:1 } },
@@ -101,7 +136,7 @@ const questions = [
   ]},
 ];
 
-// ========= 画面描画（index.htmlの構造に合わせて） =========
+// ===== 画面生成（既存 index.html 構造に合わせて） =====
 const container = document.getElementById('quiz-container');
 container.innerHTML = "";
 questions.forEach((q, i) => {
@@ -114,10 +149,9 @@ questions.forEach((q, i) => {
   container.appendChild(div);
 });
 
-// ========= 診断計算 =========
-function hashStr(s){ let h=0; for(let i=0;i<s.length;i++){ h=(h*31 + s.charCodeAt(i))|0; } return Math.abs(h); }
-
+// ===== 診断計算＆表示 =====
 document.getElementById('submit').addEventListener('click', () => {
+  const $res = document.getElementById('result');
   let scores = {};
   let answered = true;
 
@@ -134,15 +168,21 @@ document.getElementById('submit').addEventListener('click', () => {
   const max = Math.max(...entries.map(([,v]) => v));
   const tops = entries.filter(([,v]) => v === max).map(([k]) => k);
 
-  const $res = document.getElementById('result');
   if (tops.length === 1) {
     const k = tops[0];
     const name = TYPE_NAMES[k] || k;
     $res.innerHTML = `あなたのタイプは: <strong>${name}</strong>（スコア: ${max}）`;
   } else {
-    const seed = tops.sort().join("|");
-    const rare = RARE[ hashStr(seed) % RARE.length ];
+    // ★同点 → “通じる”隠しキャラを決定
+    const hiddenKey = decideHiddenFromTies(tops);
+    const hidden = HIDDEN_TEXT[hiddenKey];
     const names = tops.map(k => TYPE_NAMES[k] || k).join(", ");
-    $res.innerHTML = `同点ギター：${names}<br>レアキャラ出現 → <strong>${rare.title}</strong>：${rare.desc}`;
+    $res.innerHTML = `
+      同点タイプ：${names}<br>
+      特別な<strong>隠しキャラ</strong>が出現！<br>
+      <strong>${hidden.title}</strong> — ${hidden.desc}
+    `;
   }
+
+  $res.scrollIntoView({ behavior: "smooth" });
 });
