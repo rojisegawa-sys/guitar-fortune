@@ -166,27 +166,48 @@ document.getElementById('submit').addEventListener('click', () => {
   if (!answered) { alert('全ての質問に答えてください'); return; }
 
   const entries = Object.entries(scores);
-  const max = Math.max(...entries.map(([,v]) => v));
-  const tops = entries.filter(([,v]) => v === max).map(([k]) => k);
+  const max = Math.max(...entries.map(([, v]) => v));
+  const tops = entries.filter(([, v]) => v === max).map(([k]) => k);
+
+  // 共有用URLとテキストはエンコードしておく
+  const pageUrl = encodeURIComponent(location.href);
+  const toText = (t) => encodeURIComponent(t);
 
   if (tops.length === 1) {
-  // 単独トップの場合
-  $res.innerHTML = `
-    <span class="result-badge">結果</span>
-    あなたのタイプは <strong>${TYPE_NAMES[tops[0]]}</strong>
-    <div class="actions">
-      <button onclick="location.reload()">もう一度診断</button>
-      <a href="https://twitter.com/intent/tweet?text=ギター占い診断結果：${TYPE_NAMES[tops[0]]}%20%23ギター占い&url=${location.href}" target="_blank">Xでシェア</a>
-    </div>
-  `;
-} else {
-  // 同点の場合
-  $res.innerHTML = `
-    <span class="result-badge">同点</span>
-    同点タイプ：${tops.map(k => TYPE_NAMES[k]).join(", ")}
-    <div class="actions">
-      <button onclick="location.reload()">もう一度診断</button>
-      <a href="https://twitter.com/intent/tweet?text=ギター占い診断結果：${tops.map(k => TYPE_NAMES[k]).join(", ")}%20%23ギター占い&url=${location.href}" target="_blank">Xでシェア</a>
-    </div>
-  `;
-}
+    // 単独トップ
+    const k = tops[0];
+    const name = TYPE_NAMES[k] || k;
+    $res.innerHTML = `
+      <span class="result-badge">結果</span>
+      あなたのタイプは <strong>${name}</strong>
+      <div class="actions">
+        <button onclick="location.reload()">もう一度診断</button>
+        <a target="_blank"
+           href="https://twitter.com/intent/tweet?text=${toText('ギター占い診断結果：' + name)}&url=${pageUrl}">
+           Xでシェア
+        </a>
+      </div>
+    `;
+  } else {
+    // ★同点 → “通じる”隠しキャラを決定して表示
+    const hiddenKey = decideHiddenFromTies(tops);
+    const hidden = HIDDEN_TEXT[hiddenKey];
+    const names = tops.map(k => TYPE_NAMES[k] || k).join(", ");
+
+    $res.innerHTML = `
+      <span class="result-badge">同点</span>
+      同点タイプ：${names}<br>
+      <span class="result-badge">隠しキャラ</span>
+      <strong>${hidden.title}</strong> — ${hidden.desc}
+      <div class="actions">
+        <button onclick="location.reload()">もう一度診断</button>
+        <a target="_blank"
+           href="https://twitter.com/intent/tweet?text=${toText('隠しキャラ『' + hidden.title + '』が出現！')}&url=${pageUrl}">
+           Xでシェア
+        </a>
+      </div>
+    `;
+  }
+
+  $res.scrollIntoView({ behavior: "smooth" });
+});
