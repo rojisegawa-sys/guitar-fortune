@@ -149,6 +149,26 @@ questions.forEach((q, i) => {
   });
   container.appendChild(div);
 });
+// 進捗を更新する
+function updateProgress(){
+  let answered = 0;
+  for (let i = 0; i < questions.length; i++){
+    if (document.querySelector(`input[name="q${i}"]:checked`)) answered++;
+  }
+  const pct = Math.round((answered / questions.length) * 100);
+  const bar = document.getElementById('progbar');
+  const txt = document.getElementById('progtext');
+  if (bar) bar.style.width = pct + '%';
+  if (txt) txt.textContent = `${answered}/${questions.length}`;
+}
+
+// ラジオ選択時に進捗を更新
+container.addEventListener('change', (e)=>{
+  if (e.target && e.target.name && e.target.name.startsWith('q')) updateProgress();
+});
+
+// 初期表示
+updateProgress();
 
 // ===== 診断計算＆表示 =====
 document.getElementById('submit').addEventListener('click', () => {
