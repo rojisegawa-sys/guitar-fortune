@@ -170,20 +170,23 @@ document.getElementById('submit').addEventListener('click', () => {
   const tops = entries.filter(([,v]) => v === max).map(([k]) => k);
 
   if (tops.length === 1) {
-    const k = tops[0];
-    const name = TYPE_NAMES[k] || k;
-    $res.innerHTML = `あなたのタイプは: <strong>${name}</strong>（スコア: ${max}）`;
-  } else {
-    // ★同点 → “通じる”隠しキャラを決定
-    const hiddenKey = decideHiddenFromTies(tops);
-    const hidden = HIDDEN_TEXT[hiddenKey];
-    const names = tops.map(k => TYPE_NAMES[k] || k).join(", ");
-    $res.innerHTML = `
-      同点タイプ：${names}<br>
-      特別な<strong>隠しキャラ</strong>が出現！<br>
-      <strong>${hidden.title}</strong> — ${hidden.desc}
-    `;
-  }
-
-  $res.scrollIntoView({ behavior: "smooth" });
-});
+  // 単独トップの場合
+  $res.innerHTML = `
+    <span class="result-badge">結果</span>
+    あなたのタイプは <strong>${TYPE_NAMES[tops[0]]}</strong>
+    <div class="actions">
+      <button onclick="location.reload()">もう一度診断</button>
+      <a href="https://twitter.com/intent/tweet?text=ギター占い診断結果：${TYPE_NAMES[tops[0]]}%20%23ギター占い&url=${location.href}" target="_blank">Xでシェア</a>
+    </div>
+  `;
+} else {
+  // 同点の場合
+  $res.innerHTML = `
+    <span class="result-badge">同点</span>
+    同点タイプ：${tops.map(k => TYPE_NAMES[k]).join(", ")}
+    <div class="actions">
+      <button onclick="location.reload()">もう一度診断</button>
+      <a href="https://twitter.com/intent/tweet?text=ギター占い診断結果：${tops.map(k => TYPE_NAMES[k]).join(", ")}%20%23ギター占い&url=${location.href}" target="_blank">Xでシェア</a>
+    </div>
+  `;
+}
