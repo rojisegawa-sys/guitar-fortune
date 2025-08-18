@@ -27,20 +27,21 @@ const HIDDEN_TEXT = {
 
 // ★本タイプ → 隠しキャラの割り振り（“通じる傾向”で票を入れる）
 const HIDDEN_FROM_MAIN = {
+  es335: "casino",
+  pacifica: "yamahasg",
+  lespaul: "lpjr",
+  flyingv: "explorer",
+
   strat: "casino",
   tele: "lpjr",
-  lespaul: "yamahasg",
-  es335: "yamahasg",
   ricken: "casino",
   ibanez: "explorer",
   jazzmaster: "explorer",
   prs: "yamahasg",
-  sg: "yamahasg",
+  sg: "lpjr",
   dane: "casino",
-  mustang: "lpjr",
-  pacifica: "yamahasg",
-  flyingv: "explorer", // 補助タイプ
 };
+
 
 // 安定的に決めるためのハッシュ（ランダムではなく毎回同じ結果に）
 function stableHash(s){ let h=0; for(let i=0;i<s.length;i++){ h=(h*31 + s.charCodeAt(i))|0; } return Math.abs(h); }
