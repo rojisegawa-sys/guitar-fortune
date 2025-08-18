@@ -169,40 +169,35 @@ document.getElementById('submit').addEventListener('click', () => {
   const max = Math.max(...entries.map(([, v]) => v));
   const tops = entries.filter(([, v]) => v === max).map(([k]) => k);
 
-  // 共有用URLとテキストはエンコードしておく
   const pageUrl = encodeURIComponent(location.href);
   const toText = (t) => encodeURIComponent(t);
 
   if (tops.length === 1) {
-    // 単独トップ
+    // 単独トップ：通常表示
     const k = tops[0];
     const name = TYPE_NAMES[k] || k;
     $res.innerHTML = `
-      <span class="result-badge">結果</span>
-      あなたのタイプは <strong>${name}</strong>
+      <span class="result-badge">診断結果</span>
+      <strong>${name}</strong>
       <div class="actions">
         <button onclick="location.reload()">もう一度診断</button>
         <a target="_blank"
-           href="https://twitter.com/intent/tweet?text=${toText('ギター占い診断結果：' + name)}&url=${pageUrl}">
+           href="https://twitter.com/intent/tweet?text=${toText('私は『' + name + '』タイプでした！')}&url=${pageUrl}">
            Xでシェア
         </a>
       </div>
     `;
   } else {
-    // ★同点 → “通じる”隠しキャラを決定して表示
+    // ★同点：同点であることを伏せ、通常結果と同じ見た目で“隠しキャラ”を表示
     const hiddenKey = decideHiddenFromTies(tops);
     const hidden = HIDDEN_TEXT[hiddenKey];
-    const names = tops.map(k => TYPE_NAMES[k] || k).join(", ");
-
     $res.innerHTML = `
-      <span class="result-badge">同点</span>
-      同点タイプ：${names}<br>
-      <span class="result-badge">隠しキャラ</span>
+      <span class="result-badge">診断結果</span>
       <strong>${hidden.title}</strong> — ${hidden.desc}
       <div class="actions">
         <button onclick="location.reload()">もう一度診断</button>
         <a target="_blank"
-           href="https://twitter.com/intent/tweet?text=${toText('隠しキャラ『' + hidden.title + '』が出現！')}&url=${pageUrl}">
+           href="https://twitter.com/intent/tweet?text=${toText('私は『' + hidden.title + '』タイプでした！')}&url=${pageUrl}">
            Xでシェア
         </a>
       </div>
