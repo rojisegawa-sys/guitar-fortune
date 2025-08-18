@@ -1,14 +1,25 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+1p:wght@400;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ギター占い</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <h1>🎸 ギター占い 🎸</h1>
-<div id="quiz-container"></div>
+<header class="hero">
+  <h1>ギター占い｜16タイプ診断</h1>
+  <p class="subtitle">12問に答えるとタイプが分かるよ。ひみつの結果が出ることも…🎸</p>
+
+  <div class="progress">
+    <div class="bar" id="progbar"></div>
+  </div>
+  <div class="progress-label"><span id="progtext">0/12</span></div>
+</header>
+
+  <div id="quiz-container"></div>
 <button id="submit">診断する</button>
 <div id="result"></div>
 <script src="script.js?v=5"></script>
