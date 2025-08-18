@@ -8,4 +8,28 @@ h1 { color: #333; }
 #quiz-container { margin: 20px auto; max-width: 600px; text-align: left; }
 .question { margin-bottom: 15px; background: white; padding: 10px; border-radius: 8px; }
 button { padding: 10px 20px; font-size: 16px; margin-top: 20px; cursor: pointer; }
-#result { margin-top: 20px; font-size: 18px; font-weight: bold; }
+#result {
+  margin-top: 24px;
+  padding: 16px 18px;
+  border-radius: 12px;
+  background: #f4f8ff;
+  border: 1px solid #dbe7ff;
+  font-size: 18px;
+  line-height: 1.7;
+}
+.result-badge {
+  display: inline-block;
+  margin-right: 8px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #ffd166;
+  font-size: 13px;
+  font-weight: 700;
+}
+.actions { margin-top: 14px; }
+.actions a, .actions button {
+  display: inline-block; margin-right: 8px;
+  padding: 8px 12px; border-radius: 10px; border: 1px solid #ddd;
+  background: #fff; cursor: pointer; text-decoration: none; font-size: 14px;
+}
+.actions a:hover, .actions button:hover { background: #f7f7f7; }
