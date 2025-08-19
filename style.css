@@ -57,14 +57,7 @@ body{
 .hero h1{ margin:0 0 6px; letter-spacing:.02em; color:#111; }
 .hero .subtitle{ margin:0 0 14px; color:#555; }
 
-/* 進捗バー */
-.progress{ height:12px; background:#e9efff; border-radius:999px; overflow:hidden; }
-.progress .bar{
-  height:100%; width:0%;
-  background: linear-gradient(90deg, var(--accent), #8aa6ff);
-  transition: width .25s ease;
-}
-.progress-label{ font-size:13px; color:#556; margin-top:6px; }
+
 
 /* 質問カードをちょいリッチに */
 #quiz-container{ max-width:760px; }
@@ -89,3 +82,104 @@ button#submit:hover{ filter:brightness(1.05); transform: translateY(-1px); }
 }
 .result-badge{ background: var(--accent-2); }
 .actions a, .actions button{ border-color:#e6e6e6; }
+/* ===== PaRappa風ポップ化 ===== */
+:root{
+  --cream:#FFF7D6;     /* クリーム色ベース */
+  --sky:#6ED2FF;       /* 明るい空色 */
+  --lemon:#FFE066;     /* レモン黄 */
+  --pink:#FF8AB3;      /* ポップなピンク */
+  --red:#FF4D6D;       /* 差し色の赤 */
+  --ink:#1d1c1c;
+  --card:#ffffff;
+}
+
+/* 背景：クリーム色＋パステルの水玉 */
+body{
+  font-family:"Zen Maru Gothic","Fredoka",system-ui,Arial,sans-serif;
+  background:
+    radial-gradient(12px 12px at 18% 14%, rgba(255,138,179,.18) 0 60%, transparent 61%),
+    radial-gradient(10px 10px at 82% 22%, rgba(110,210,255,.18) 0 60%, transparent 61%),
+    radial-gradient(14px 14px at 12% 78%, rgba(255,224,102,.18) 0 60%, transparent 61%),
+    var(--cream) !important;
+  color:var(--ink);
+}
+
+/* タイトルをポップに */
+h1{
+  font-weight:900;
+  letter-spacing:.02em;
+  color:#111;
+  text-shadow:
+    0.08em 0.08em 0 var(--lemon),
+    -0.02em 0.02em 0 #fff;
+}
+
+/* 質問カードを“おもちゃ箱”っぽく */
+.question{
+  border:4px solid #00000010;
+  border-radius:18px;
+  padding:14px 14px 12px;
+  background:linear-gradient(#fff, #fff) padding-box,
+             repeating-linear-gradient(45deg, transparent 0 8px, #00000008 8px 16px) border-box;
+  box-shadow:0 8px 0 #00000010;
+  transition:transform .08s ease;
+}
+.question:hover{ transform:translateY(-2px); }
+
+/* 選択肢のヒットエリア広め＆ラジオ少し大きく */
+.question label{ display:block; padding:6px 8px; border-radius:10px; }
+.question input[type="radio"]{ transform:scale(1.2); margin-right:6px; }
+.question label:hover{ background:#00000005; }
+
+/* 主ボタンを“ぷっくり” */
+button#submit{
+  background:linear-gradient(180deg, var(--sky), #2d82ff);
+  color:#fff; border:0; border-radius:18px;
+  padding:14px 22px; font-weight:900; font-size:18px;
+  box-shadow:0 10px 0 #1c55b7, 0 16px 24px rgba(45,130,255,.25);
+  transform:translateY(0); transition:transform .05s ease, filter .15s;
+}
+button#submit:hover{ filter:brightness(1.05); }
+button#submit:active{ transform:translateY(4px); box-shadow:0 6px 0 #1c55b7; }
+
+/* 結果ボックスをポップ化＋“ポン”演出 */
+#result{
+  background:#fff;
+  border:4px solid #00000012;
+  border-radius:18px;
+  box-shadow:0 10px 0 #00000010;
+}
+#result.show{ animation:pop .28s ease-out; }
+@keyframes pop{
+  0%{ transform:scale(.92) rotate(-1deg); opacity:0; }
+  100%{ transform:scale(1) rotate(0); opacity:1; }
+}
+
+/* バッジをキャンディ色に */
+.result-badge{
+  background:linear-gradient(180deg, var(--lemon), #ffc54d);
+  border:2px solid #00000010;
+  box-shadow:0 4px 0 #00000010;
+  font-weight:900;
+}
+
+/* アクションボタンも丸く */
+.actions a, .actions button{
+  border-radius:14px;
+  font-weight:700;
+}
+
+/* 画面にふわっと浮く音符 */
+#fx-notes{
+  position:fixed; inset:0; pointer-events:none; z-index:9999;
+}
+.note{
+  position:absolute; font-size:22px; opacity:0; transform:translateY(0) scale(.9);
+  animation: floatNote 1.6s ease-out forwards;
+  text-shadow:0 2px 0 #00000030;
+}
+@keyframes floatNote{
+  0%{ opacity:0; transform:translateY(0) scale(.9) rotate(-10deg); }
+  10%{ opacity:1; }
+  100%{ opacity:0; transform:translateY(-120px) scale(1.2) rotate(10deg); }
+}
