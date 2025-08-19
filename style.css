@@ -1,249 +1,84 @@
-body {
-  font-family: Arial, sans-serif;
-  background: #f5f5f5;
-  text-align: center;
-  padding: 20px;
-}
-h1 { color: #333; }
-#quiz-container { margin: 20px auto; max-width: 600px; text-align: left; }
-.question { margin-bottom: 15px; background: white; padding: 10px; border-radius: 8px; }
-button { padding: 10px 20px; font-size: 16px; margin-top: 20px; cursor: pointer; }
-#result {
-  margin-top: 24px;
-  padding: 16px 18px;
-  border-radius: 12px;
-  background: #f4f8ff;
-  border: 1px solid #dbe7ff;
-  font-size: 18px;
-  line-height: 1.7;
-}
-.result-badge {
-  display: inline-block;
-  margin-right: 8px;
-  padding: 2px 8px;
-  border-radius: 999px;
-  background: #ffd166;
-  font-size: 13px;
-  font-weight: 700;
-}
-.actions { margin-top: 14px; }
-.actions a, .actions button {
-  display: inline-block; margin-right: 8px;
-  padding: 8px 12px; border-radius: 10px; border: 1px solid #ddd;
-  background: #fff; cursor: pointer; text-decoration: none; font-size: 14px;
-}
-.actions a:hover, .actions button:hover { background: #f7f7f7; }
-/* 配色 */
+/* ===== ギター占い：コミック調 決定版CSS ===== */
+
+/* カラーパレット */
 :root{
-  --bg1:#f6fbff;
-  --bg2:#eef4ff;
-  --accent:#4f7cff;
-  --accent-2:#ffd166;
-  --ink:#223;
+  --cream:#FFF7D6; --sky:#6ED2FF; --blue-deep:#2d82ff;
+  --lemon:#FFE066; --pink:#FF8AB3; --red:#FF4D6D; --lime:#B6FF66;
+  --ink:#161515; --card:#fff;
 }
 
-body{
-  font-family: "M PLUS 1p", Arial, sans-serif;
-  background: radial-gradient(1200px 600px at 80% -10%, var(--bg2), transparent),
-              radial-gradient(900px 500px at -10% 100%, #fff3d6, transparent),
-              var(--bg1);
-  min-height: 100vh;
-}
-
-.hero{
-  max-width: 760px; margin: 0 auto 18px;
-  text-align: center; padding: 22px 16px 12px;
-}
-.hero h1{ margin:0 0 6px; letter-spacing:.02em; color:#111; }
-.hero .subtitle{ margin:0 0 14px; color:#555; }
-
-
-
-/* 質問カードをちょいリッチに */
-#quiz-container{ max-width:760px; }
-.question{
-  border:1px solid #eaeef5; box-shadow: 0 2px 10px rgba(25,40,80,.05);
-  transition: transform .12s ease, box-shadow .12s ease;
-}
-.question:hover{ transform: translateY(-2px); box-shadow:0 6px 18px rgba(25,40,80,.10); }
-.question p{ font-weight:700; color:#234; }
-
-/* ボタンを主役色に */
-button#submit{
-  background: var(--accent); color:#fff; border:0; border-radius:12px;
-  padding:12px 20px; font-weight:700; letter-spacing:.02em;
-  box-shadow:0 6px 14px rgba(79,124,255,.25);
-}
-button#submit:hover{ filter:brightness(1.05); transform: translateY(-1px); }
-
-/* 結果ボックスは既存の#resultを活かす（色だけ微調整） */
-#result{
-  background:#f7fbff; border:1px solid #d8e6ff; color:var(--ink);
-}
-.result-badge{ background: var(--accent-2); }
-.actions a, .actions button{ border-color:#e6e6e6; }
-/* ===== PaRappa風ポップ化 ===== */
-:root{
-  --cream:#FFF7D6;     /* クリーム色ベース */
-  --sky:#6ED2FF;       /* 明るい空色 */
-  --lemon:#FFE066;     /* レモン黄 */
-  --pink:#FF8AB3;      /* ポップなピンク */
-  --red:#FF4D6D;       /* 差し色の赤 */
-  --ink:#1d1c1c;
-  --card:#ffffff;
-}
-
-/* 背景：クリーム色＋パステルの水玉 */
+/* ベース */
+html,body{ height:100%; }
 body{
   font-family:"Zen Maru Gothic","Fredoka",system-ui,Arial,sans-serif;
-  background:
-    radial-gradient(12px 12px at 18% 14%, rgba(255,138,179,.18) 0 60%, transparent 61%),
-    radial-gradient(10px 10px at 82% 22%, rgba(110,210,255,.18) 0 60%, transparent 61%),
-    radial-gradient(14px 14px at 12% 78%, rgba(255,224,102,.18) 0 60%, transparent 61%),
-    var(--cream) !important;
   color:var(--ink);
-}
-
-/* タイトルをポップに */
-h1{
-  font-weight:900;
-  letter-spacing:.02em;
-  color:#111;
-  text-shadow:
-    0.08em 0.08em 0 var(--lemon),
-    -0.02em 0.02em 0 #fff;
-}
-
-/* 質問カードを“おもちゃ箱”っぽく */
-.question{
-  border:4px solid #00000010;
-  border-radius:18px;
-  padding:14px 14px 12px;
-  background:linear-gradient(#fff, #fff) padding-box,
-             repeating-linear-gradient(45deg, transparent 0 8px, #00000008 8px 16px) border-box;
-  box-shadow:0 8px 0 #00000010;
-  transition:transform .08s ease;
-}
-.question:hover{ transform:translateY(-2px); }
-
-/* 選択肢のヒットエリア広め＆ラジオ少し大きく */
-.question label{ display:block; padding:6px 8px; border-radius:10px; }
-.question input[type="radio"]{ transform:scale(1.2); margin-right:6px; }
-.question label:hover{ background:#00000005; }
-
-/* 主ボタンを“ぷっくり” */
-button#submit{
-  background:linear-gradient(180deg, var(--sky), #2d82ff);
-  color:#fff; border:0; border-radius:18px;
-  padding:14px 22px; font-weight:900; font-size:18px;
-  box-shadow:0 10px 0 #1c55b7, 0 16px 24px rgba(45,130,255,.25);
-  transform:translateY(0); transition:transform .05s ease, filter .15s;
-}
-button#submit:hover{ filter:brightness(1.05); }
-button#submit:active{ transform:translateY(4px); box-shadow:0 6px 0 #1c55b7; }
-
-/* 結果ボックスをポップ化＋“ポン”演出 */
-#result{
-  background:#fff;
-  border:4px solid #00000012;
-  border-radius:18px;
-  box-shadow:0 10px 0 #00000010;
-}
-#result.show{ animation:pop .28s ease-out; }
-@keyframes pop{
-  0%{ transform:scale(.92) rotate(-1deg); opacity:0; }
-  100%{ transform:scale(1) rotate(0); opacity:1; }
-}
-
-/* バッジをキャンディ色に */
-.result-badge{
-  background:linear-gradient(180deg, var(--lemon), #ffc54d);
-  border:2px solid #00000010;
-  box-shadow:0 4px 0 #00000010;
-  font-weight:900;
-}
-
-/* アクションボタンも丸く */
-.actions a, .actions button{
-  border-radius:14px;
-  font-weight:700;
-}
-
-/* 画面にふわっと浮く音符 */
-#fx-notes{
-  position:fixed; inset:0; pointer-events:none; z-index:9999;
-}
-.note{
-  position:absolute; font-size:22px; opacity:0; transform:translateY(0) scale(.9);
-  animation: floatNote 1.6s ease-out forwards;
-  text-shadow:0 2px 0 #00000030;
-}
-@keyframes floatNote{
-  0%{ opacity:0; transform:translateY(0) scale(.9) rotate(-10deg); }
-  10%{ opacity:1; }
-  100%{ opacity:0; transform:translateY(-120px) scale(1.2) rotate(10deg); }
-}
-/* ===== バリバリ・コミック化 ===== */
-:root{
-  --cream:#FFF7D6; --sky:#6ED2FF; --lemon:#FFE066; --pink:#FF8AB3; --red:#FF4D6D; --lime:#B6FF66;
-  --ink:#161515; --card:#fff; --blue-deep:#2d82ff;
-}
-
-/* 背景：クリーム×斜めストライプ＋星 */
-body{
-  font-family:"Zen Maru Gothic","Fredoka",system-ui,Arial,sans-serif;
   background:
     repeating-linear-gradient(45deg, rgba(0,0,0,.028) 0 12px, transparent 12px 24px),
     radial-gradient(600px 300px at 90% -10%, rgba(255,138,179,.14), transparent 60%),
     radial-gradient(800px 420px at -10% 110%, rgba(110,210,255,.14), transparent 60%),
-    var(--cream) !important;
+    var(--cream);
   min-height:100vh;
+  padding:20px;
+  text-align:center;
   overflow-x:hidden;
 }
 
-/* ヒーロー帯をビカッと */
-h1{
+/* ヒーロー */
+.hero{ max-width:760px; margin:0 auto 18px; }
+.hero h1{
   font-weight:900; letter-spacing:.01em; color:#111;
   display:inline-block; padding:10px 18px; border-radius:14px;
-  background:linear-gradient(180deg,#fff,#ffe); 
+  background:linear-gradient(180deg,#fff,#ffe);
   border:4px solid #00000020; box-shadow:0 10px 0 #00000010;
-  position:relative;
+  position:relative; margin:0 0 6px;
 }
-h1::after{
+.hero h1::after{
   content:""; position:absolute; inset:-10px -14px;
   border:4px solid #000; border-radius:16px; pointer-events:none;
   clip-path: polygon(0 10%, 100% 0, 95% 100%, 5% 90%);
 }
+.subtitle{
+  display:inline-block; margin:8px 0 16px; padding:4px 10px; font-weight:900; color:#fff;
+  background:linear-gradient(90deg, var(--pink), var(--red)); border:3px solid #000; border-radius:12px;
+  text-shadow:0 2px 0 #00000040;
+}
 
-/* 質問カード：極太フチ＆ポップ影 */
+/* コンテンツ幅 */
+#quiz-container{ max-width:760px; margin:20px auto; text-align:left; }
+
+/* 質問カード */
 .question{
   border:4px solid #000; border-radius:22px;
   padding:14px 14px 12px; background:#fff;
   box-shadow: 0 10px 0 #00000020, 0 20px 24px rgba(0,0,0,.08);
   transform: translateY(0); transition: transform .08s ease;
+  margin-bottom:15px;
 }
 .question:hover{ transform: translateY(-3px) rotate(-.2deg); }
-.question p{ font-weight:900; color:#111; }
+.question p{ font-weight:900; color:#111; margin:0 0 6px; }
 
-/* 選択肢：ホバーでピカッ */
+/* 選択肢 */
 .question label{ display:block; padding:8px 10px; border-radius:12px; border:3px dashed transparent; }
 .question label:hover{ background:#fffbe8; border-color:#ffc54d; }
 .question input[type="radio"]{ transform:scale(1.25); margin-right:8px; }
 
-/* 送信ボタン：コミックボタン */
+/* 送信ボタン */
 button#submit{
-  background:linear-gradient(180deg, var(--sky), var(--blue-deep)); color:#fff; 
+  background:linear-gradient(180deg, var(--sky), var(--blue-deep)); color:#fff;
   border:4px solid #000; border-radius:20px;
   padding:14px 26px; font-weight:900; font-size:20px; letter-spacing:.02em;
   box-shadow:0 12px 0 #153e8a, 0 20px 24px rgba(45,130,255,.25);
   transform:translateY(0); transition: transform .05s ease, filter .15s;
+  margin:10px auto 14px; cursor:pointer;
 }
 button#submit:active{ transform:translateY(5px); box-shadow:0 7px 0 #153e8a; }
 
-/* 結果ボックス：ドン！ */
+/* 結果ボックス */
 #result{
+  max-width:760px; margin:24px auto;
   background:#fff; border:5px solid #000; border-radius:22px;
   box-shadow:0 14px 0 #00000024, 0 28px 36px rgba(0,0,0,.2);
+  padding:16px 18px; font-size:18px; line-height:1.7;
 }
 #result.show{ animation:pop2 .32s cubic-bezier(.2,1.2,.2,1); }
 @keyframes pop2{
@@ -251,44 +86,38 @@ button#submit:active{ transform:translateY(5px); box-shadow:0 7px 0 #153e8a; }
   60%{ transform:scale(1.03) rotate(.6deg); opacity:1; }
   100%{ transform:scale(1) rotate(0); }
 }
-.result-badge{
-  background:linear-gradient(180deg, var(--lemon), #ffc54d);
-  border:3px solid #000; box-shadow:0 6px 0 #00000024; color:#111;
-}
 
-/* アクションボタンをキャンディに */
+/* バッジとアクション */
+.result-badge{
+  display:inline-block; margin-right:8px; padding:2px 8px; border-radius:999px;
+  background:linear-gradient(180deg, var(--lemon), #ffc54d);
+  border:3px solid #000; box-shadow:0 6px 0 #00000024; color:#111; font-size:13px; font-weight:900;
+}
+.actions{ margin-top:14px; }
 .actions a, .actions button{
-  border:4px solid #000; border-radius:14px; font-weight:900; background:#fff;
+  display:inline-block; margin-right:8px; padding:8px 12px; border-radius:14px;
+  border:4px solid #000; background:#fff; text-decoration:none; font-size:14px; font-weight:900; cursor:pointer;
 }
 .actions a:hover, .actions button:hover{ background:#fffbe8; }
 
-/* 浮遊演出 */
+/* エフェクト層 */
 #fx-notes, #fx-stickers, #fx-confetti{ position:fixed; inset:0; pointer-events:none; z-index:9999; }
 .note{
   position:absolute; font-size:26px; opacity:0; transform:translateY(0) scale(.9);
-  animation: floatNote 1.7s ease-out forwards;
-  text-shadow:0 3px 0 #00000030;
+  animation: floatNote 1.7s ease-out forwards; text-shadow:0 3px 0 #00000030;
 }
 @keyframes floatNote{
   0%{ opacity:0; transform:translateY(0) scale(.9) rotate(-10deg); }
-  10%{ opacity:1; }
-  100%{ opacity:0; transform:translateY(-140px) scale(1.25) rotate(10deg); }
+  10%{ opacity:1; } 100%{ opacity:0; transform:translateY(-140px) scale(1.25) rotate(10deg); }
 }
-
-/* ステッカー（ギターや星） */
 .sticker{
   position:absolute; font-size:40px; opacity:0; transform:scale(.6) rotate(-8deg);
-  animation: popSticker .5s ease-out forwards;
-  text-shadow:0 4px 0 #00000030;
+  animation: popSticker .5s ease-out forwards; text-shadow:0 4px 0 #00000030;
 }
 @keyframes popSticker{
   0%{ opacity:0; transform:scale(.6) rotate(-8deg); }
   100%{ opacity:1; transform:scale(1) rotate(0); }
 }
 
-/* ファビュラス縁取りタイトル（オプション） */
-.subtitle{
-  display:inline-block; margin:8px 0 16px; padding:4px 10px; font-weight:900; color:#fff;
-  background:linear-gradient(90deg, var(--pink), var(--red)); border:3px solid #000; border-radius:12px;
-  text-shadow:0 2px 0 #00000040;
-}
+/* 細かな調整 */
+h1{ margin:0; }
