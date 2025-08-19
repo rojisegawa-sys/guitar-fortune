@@ -1,39 +1,34 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;700;900&family=Fredoka:wght@700;900&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ギター占い</title>
 
-  <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ギター占い</title>
-<link rel="stylesheet" href="style.css">
+  <!-- フォント -->
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;700;900&family=Fredoka:wght@700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-<h1>🎸 ギター占い 🎸</h1>
-<header class="hero">
-  <h1>ギター占い｜16タイプ診断</h1>
-  <p class="subtitle">12問に答えるとタイプが分かるよ。ひみつの結果が出ることも…🎸</p>
-
-  <div class="progress">
-    <div class="bar" id="progbar"></div>
-  </div>
-  <div class="progress-label"><span id="progtext">0/12</span></div>
-</header>
+  <header class="hero">
+    <h1>ギター占い｜16タイプ診断</h1>
+    <p class="subtitle">12問に答えるとタイプが分かるよ。ひみつの結果が出ることも…🎸</p>
+  </header>
 
   <div id="quiz-container"></div>
-<button id="submit">診断する</button>
-<div id="result"></div>
-<script src="script.js?v=5"></script>
-<!-- 演出：音符＆ステッカー＆紙吹雪 -->
-<canvas id="fx-confetti"></canvas>
-<div id="fx-notes"></div>
-<div id="fx-stickers"></div>
+  <button id="submit">診断する</button>
+  <div id="result"></div>
 
-<!-- 効果音（任意で差し替えOK） -->
-<audio id="sfx-pop" src="https://cdn.jsdelivr.net/gh/ume-helpers/sfx/pop.mp3" preload="auto"></audio>
-<audio id="sfx-yeah" src="https://cdn.jsdelivr.net/gh/ume-helpers/sfx/yeah.mp3" preload="auto"></audio>
+  <!-- スクリプト -->
+  <script src="script.js?v=5"></script>
 
+  <!-- 演出レイヤー（1つずつだけ置く） -->
+  <canvas id="fx-confetti"></canvas>
+  <div id="fx-notes"></div>
+  <div id="fx-stickers"></div>
+
+  <!-- 効果音（不要なら後でSOUND_ON=falseに） -->
+  <audio id="sfx-pop" src="https://cdn.jsdelivr.net/gh/ume-helpers/sfx/pop.mp3" preload="auto"></audio>
+  <audio id="sfx-yeah" src="https://cdn.jsdelivr.net/gh/ume-helpers/sfx/yeah.mp3" preload="auto"></audio>
 </body>
-<div id="fx-notes"></div>
-
 </html>
