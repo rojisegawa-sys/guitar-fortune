@@ -277,5 +277,3 @@ document.getElementById('submit').addEventListener('click', () => {
   popResult($res); sprinkleNotes(); dropStickers(); confettiBurst(); play('sfx-pop'); play('sfx-yeah');
   $res.scrollIntoView({ behavior: "smooth" });
 });
-
-
