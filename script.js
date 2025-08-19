@@ -1,5 +1,29 @@
 // ===== ギター占い（12問版・同点時は「隠しキャラ」を傾向マッチで出現） =====
 
+function popResult($el){
+  $el.classList.add('show');
+  setTimeout(()=> $el.classList.remove('show'), 400);
+}
+
+function sprinkleNotes(){
+  const wrap = document.getElementById('fx-notes');
+  if(!wrap) return;
+  const icons = ["🎵","🎶","⭐","✨","🎸"];
+  for(let i=0;i<6;i++){
+    const s = document.createElement('div');
+    s.className = 'note';
+    s.textContent = icons[Math.floor(Math.random()*icons.length)];
+    const x = 20 + Math.random()*60;        // 画面幅の20〜80%に散らす
+    const y = 65 + Math.random()*10;        // 画面下の方から出す
+    s.style.left = x + 'vw';
+    s.style.top = y + 'vh';
+    s.style.color = [ 'var(--pink)','var(--sky)','var(--red)'][i%3];
+    s.style.animationDelay = (i*0.05)+'s';
+    wrap.appendChild(s);
+    setTimeout(()=> wrap.removeChild(s), 1800);
+  }
+}
+
 // 本タイプ（加点キー）→ 表示名
 const TYPE_NAMES = {
   strat: "Fender Stratocaster",
@@ -212,6 +236,8 @@ document.getElementById('submit').addEventListener('click', () => {
     const hiddenKey = decideHiddenFromTies(tops);
     const hidden = HIDDEN_TEXT[hiddenKey];
     $res.innerHTML = `
+    popResult($res); sprinkleNotes();
+
       <span class="result-badge">診断結果</span>
       <strong>${hidden.title}</strong> — ${hidden.desc}
       <div class="actions">
