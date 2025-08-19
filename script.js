@@ -1,4 +1,75 @@
 // ===== ギター占い（12問版・同点時は「隠しキャラ」を傾向マッチで出現） =====
+// ===== バリバリ演出：設定 =====
+const SOUND_ON = true; // 音が不要なら false
+function play(id){ if(!SOUND_ON) return; const el = document.getElementById(id); if(el){ el.currentTime = 0; el.play().catch(()=>{});} }
+
+function popResult($el){
+  $el.classList.add('show');
+  setTimeout(()=> $el.classList.remove('show'), 450);
+}
+
+// ふわっと音符
+function sprinkleNotes(){
+  const wrap = document.getElementById('fx-notes');
+  if(!wrap) return;
+  const icons = ["🎵","🎶","⭐","✨","🎸"];
+  for(let i=0;i<7;i++){
+    const s = document.createElement('div');
+    s.className = 'note';
+    s.textContent = icons[Math.floor(Math.random()*icons.length)];
+    s.style.left = (18 + Math.random()*64) + 'vw';
+    s.style.top  = (64 + Math.random()*12) + 'vh';
+    s.style.color = ['#ff8ab3','#6ed2ff','#ff4d6d','#b6ff66'][i%4];
+    s.style.animationDelay = (i*0.05)+'s';
+    wrap.appendChild(s);
+    setTimeout(()=> wrap.removeChild(s), 1900);
+  }
+}
+
+// ステッカーをポン
+function dropStickers(){
+  const wrap = document.getElementById('fx-stickers');
+  if(!wrap) return;
+  const list = ["🎸","⭐","⚡","🔥","🎶"];
+  for(let i=0;i<3;i++){
+    const d = document.createElement('div');
+    d.className = 'sticker';
+    d.textContent = list[i];
+    d.style.left = (10 + Math.random()*80) + 'vw';
+    d.style.top = (10 + Math.random()*20) + 'vh';
+    wrap.appendChild(d);
+    setTimeout(()=> wrap.removeChild(d), 1500);
+  }
+}
+
+// かんたん紙吹雪（キャンバス）
+function confettiBurst(){
+  const cvs = document.getElementById('fx-confetti'); if(!cvs) return;
+  const ctx = cvs.getContext('2d');
+  const W = cvs.width = innerWidth, H = cvs.height = innerHeight;
+  const N = 120, pieces = [];
+  for(let i=0;i<N;i++){
+    pieces.push({
+      x: W/2 + (Math.random()*.6- .3)*W,
+      y: H*0.35 + (Math.random()*.2- .1)*H,
+      r: 4 + Math.random()*6,
+      c: ['#ff8ab3','#6ed2ff','#ffe066','#b6ff66','#ff4d6d'][i%5],
+      vx: (Math.random()-.5)*3, vy: 3 + Math.random()*3, g: .08 + Math.random()*.04, rot: Math.random()*Math.PI
+    });
+  }
+  let t = 0, id;
+  (function tick(){
+    id = requestAnimationFrame(tick);
+    t++; ctx.clearRect(0,0,W,H);
+    pieces.forEach(p=>{
+      p.vy += p.g; p.x += p.vx; p.y += p.vy; p.rot += .05;
+      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot);
+      ctx.fillStyle = p.c; ctx.fillRect(-p.r/2, -p.r/2, p.r, p.r);
+      ctx.restore();
+    });
+    if (t > 60) cancelAnimationFrame(id);
+  })();
+}
 
 function popResult($el){
   $el.classList.add('show');
@@ -249,6 +320,7 @@ document.getElementById('submit').addEventListener('click', () => {
       </div>
     `;
   }
+popResult($res); sprinkleNotes(); dropStickers(); confettiBurst(); play('sfx-pop'); play('sfx-yeah');
 
   $res.scrollIntoView({ behavior: "smooth" });
 });
