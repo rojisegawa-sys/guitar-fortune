@@ -1,4 +1,3 @@
-// ===== ギター占い（12問版・同点時は「隠しキャラ」を傾向マッチで出現） =====
 // ===== バリバリ演出：設定 =====
 const SOUND_ON = true; // 音が不要なら false
 function play(id){ if(!SOUND_ON) return; const el = document.getElementById(id); if(el){ el.currentTime = 0; el.play().catch(()=>{});} }
@@ -8,7 +7,7 @@ function popResult($el){
   setTimeout(()=> $el.classList.remove('show'), 450);
 }
 
-// ふわっと音符
+// 音符
 function sprinkleNotes(){
   const wrap = document.getElementById('fx-notes');
   if(!wrap) return;
@@ -26,7 +25,7 @@ function sprinkleNotes(){
   }
 }
 
-// ステッカーをポン
+// ステッカー
 function dropStickers(){
   const wrap = document.getElementById('fx-stickers');
   if(!wrap) return;
@@ -42,7 +41,7 @@ function dropStickers(){
   }
 }
 
-// かんたん紙吹雪（キャンバス）
+// 紙吹雪
 function confettiBurst(){
   const cvs = document.getElementById('fx-confetti'); if(!cvs) return;
   const ctx = cvs.getContext('2d');
@@ -71,31 +70,7 @@ function confettiBurst(){
   })();
 }
 
-function popResult($el){
-  $el.classList.add('show');
-  setTimeout(()=> $el.classList.remove('show'), 400);
-}
-
-function sprinkleNotes(){
-  const wrap = document.getElementById('fx-notes');
-  if(!wrap) return;
-  const icons = ["🎵","🎶","⭐","✨","🎸"];
-  for(let i=0;i<6;i++){
-    const s = document.createElement('div');
-    s.className = 'note';
-    s.textContent = icons[Math.floor(Math.random()*icons.length)];
-    const x = 20 + Math.random()*60;        // 画面幅の20〜80%に散らす
-    const y = 65 + Math.random()*10;        // 画面下の方から出す
-    s.style.left = x + 'vw';
-    s.style.top = y + 'vh';
-    s.style.color = [ 'var(--pink)','var(--sky)','var(--red)'][i%3];
-    s.style.animationDelay = (i*0.05)+'s';
-    wrap.appendChild(s);
-    setTimeout(()=> wrap.removeChild(s), 1800);
-  }
-}
-
-// 本タイプ（加点キー）→ 表示名
+// ===== 本タイプ（加点キー）→ 表示名 =====
 const TYPE_NAMES = {
   strat: "Fender Stratocaster",
   tele: "Fender Telecaster",
@@ -109,7 +84,7 @@ const TYPE_NAMES = {
   dane: "Danelectro",
   mustang: "Fender Mustang",
   pacifica: "Yamaha Pacifica",
-  flyingv: "Gibson Flying V", // 補助タイプ（通常結果には出ないが加点用に存在）
+  flyingv: "Gibson Flying V", // 補助タイプ（加点用）
 };
 
 // ★同点時の「隠しキャラ」候補（4種）
@@ -120,7 +95,7 @@ const HIDDEN_TEXT = {
   explorer: { title: "Gibson Explorer",            desc: "開拓精神。未知を切り開くパイオニア。" },
 };
 
-// ★本タイプ → 隠しキャラの割り振り（“通じる傾向”で票を入れる）
+// ★本タイプ → 隠しキャラ割り振り
 const HIDDEN_FROM_MAIN = {
   es335: "casino",
   pacifica: "yamahasg",
@@ -137,11 +112,10 @@ const HIDDEN_FROM_MAIN = {
   dane: "casino",
 };
 
-
-// 安定的に決めるためのハッシュ（ランダムではなく毎回同じ結果に）
+// 安定ハッシュ
 function stableHash(s){ let h=0; for(let i=0;i<s.length;i++){ h=(h*31 + s.charCodeAt(i))|0; } return Math.abs(h); }
 
-// 同点タイプ配列 tops から「隠しキャラ」を決定
+// 同点から隠しキャラ決定
 function decideHiddenFromTies(tops){
   const tally = { casino:0, yamahasg:0, lpjr:0, explorer:0 };
   tops.forEach(k => {
@@ -156,7 +130,7 @@ function decideHiddenFromTies(tops){
   return cands[ stableHash(seed) % cands.length ];
 }
 
-// ===== 質問（12問）※既存構成そのまま =====
+// ===== 質問（12問） =====
 const questions = [
   { text: "休日の朝、あなたはどう過ごす？", options: [
       { text: "早起きして散歩や運動", scores: { strat:1, pacifica:1 } },
@@ -232,7 +206,7 @@ const questions = [
   ]},
 ];
 
-// ===== 画面生成（既存 index.html 構造に合わせて） =====
+// ===== 画面生成 =====
 const container = document.getElementById('quiz-container');
 container.innerHTML = "";
 questions.forEach((q, i) => {
@@ -244,26 +218,6 @@ questions.forEach((q, i) => {
   });
   container.appendChild(div);
 });
-// 進捗を更新する
-function updateProgress(){
-  let answered = 0;
-  for (let i = 0; i < questions.length; i++){
-    if (document.querySelector(`input[name="q${i}"]:checked`)) answered++;
-  }
-  const pct = Math.round((answered / questions.length) * 100);
-  const bar = document.getElementById('progbar');
-  const txt = document.getElementById('progtext');
-  if (bar) bar.style.width = pct + '%';
-  if (txt) txt.textContent = `${answered}/${questions.length}`;
-}
-
-// ラジオ選択時に進捗を更新
-container.addEventListener('change', (e)=>{
-  if (e.target && e.target.name && e.target.name.startsWith('q')) updateProgress();
-});
-
-// 初期表示
-updateProgress();
 
 // ===== 診断計算＆表示 =====
 document.getElementById('submit').addEventListener('click', () => {
@@ -288,7 +242,7 @@ document.getElementById('submit').addEventListener('click', () => {
   const toText = (t) => encodeURIComponent(t);
 
   if (tops.length === 1) {
-    // 単独トップ：通常表示
+    // 単独トップ
     const k = tops[0];
     const name = TYPE_NAMES[k] || k;
     $res.innerHTML = `
@@ -303,12 +257,10 @@ document.getElementById('submit').addEventListener('click', () => {
       </div>
     `;
   } else {
-    // ★同点：同点であることを伏せ、通常結果と同じ見た目で“隠しキャラ”を表示
+    // 同点（伏せる）：隠しキャラで通常表示
     const hiddenKey = decideHiddenFromTies(tops);
     const hidden = HIDDEN_TEXT[hiddenKey];
     $res.innerHTML = `
-    popResult($res); sprinkleNotes();
-
       <span class="result-badge">診断結果</span>
       <strong>${hidden.title}</strong> — ${hidden.desc}
       <div class="actions">
@@ -320,7 +272,10 @@ document.getElementById('submit').addEventListener('click', () => {
       </div>
     `;
   }
-popResult($res); sprinkleNotes(); dropStickers(); confettiBurst(); play('sfx-pop'); play('sfx-yeah');
 
+  // ★演出は HTML を入れた「後」で実行！
+  popResult($res); sprinkleNotes(); dropStickers(); confettiBurst(); play('sfx-pop'); play('sfx-yeah');
   $res.scrollIntoView({ behavior: "smooth" });
 });
+
+
