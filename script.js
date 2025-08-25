@@ -241,39 +241,13 @@ document.getElementById('submit').addEventListener('click', () => {
   const pageUrl = encodeURIComponent(location.href);
   const toText = (t) => encodeURIComponent(t);
 
-  if (tops.length === 1) {
-    // 単独トップ
-    const k = tops[0];
-    const name = TYPE_NAMES[k] || k;
-    $res.innerHTML = `
-      <span class="result-badge">診断結果</span>
-      <strong>${name}</strong>
-      <div class="actions">
-        <button onclick="location.reload()">もう一度診断</button>
-        <a target="_blank"
-           href="https://twitter.com/intent/tweet?text=${toText('私は『' + name + '』タイプでした！')}&url=${pageUrl}">
-           Xでシェア
-        </a>
-      </div>
-    `;
-  } else {
-    // 同点（伏せる）：隠しキャラで通常表示
-    const hiddenKey = decideHiddenFromTies(tops);
-    const hidden = HIDDEN_TEXT[hiddenKey];
-    $res.innerHTML = `
-      <span class="result-badge">診断結果</span>
-      <strong>${hidden.title}</strong> — ${hidden.desc}
-      <div class="actions">
-        <button onclick="location.reload()">もう一度診断</button>
-        <a target="_blank"
-           href="https://twitter.com/intent/tweet?text=${toText('私は『' + hidden.title + '』タイプでした！')}&url=${pageUrl}">
-           Xでシェア
-        </a>
-      </div>
-    `;
-  }
-
-  // ★演出は HTML を入れた「後」で実行！
-  popResult($res); sprinkleNotes(); dropStickers(); confettiBurst(); play('sfx-pop'); play('sfx-yeah');
-  $res.scrollIntoView({ behavior: "smooth" });
-});
+  // 単独トップ
+if (tops.length === 1) {
+  const k = tops[0]; // 例: "strat"
+  // （演出したいならここで popResult($res) などを呼んでから…）
+  location.href = `result.html?t=${encodeURIComponent(k)}`;
+} else {
+  // 同点 → 隠しキャラキー（例: "yamahasg", "casino"...）
+  const hk = decideHiddenFromTies(tops);
+  location.href = `result.html?t=${encodeURIComponent(hk)}`;
+}
