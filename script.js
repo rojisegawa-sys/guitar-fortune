@@ -221,7 +221,6 @@ questions.forEach((q, i) => {
 
 // ===== 診断計算＆表示 =====
 document.getElementById('submit').addEventListener('click', () => {
-  const $res = document.getElementById('result');
   let scores = {};
   let answered = true;
 
@@ -238,16 +237,14 @@ document.getElementById('submit').addEventListener('click', () => {
   const max = Math.max(...entries.map(([, v]) => v));
   const tops = entries.filter(([, v]) => v === max).map(([k]) => k);
 
-  const pageUrl = encodeURIComponent(location.href);
-  const toText = (t) => encodeURIComponent(t);
+  // 単独トップ → 通常タイプのキーで遷移
+  if (tops.length === 1) {
+    const k = tops[0]; // 例: "strat"
+    location.href = `result.html?t=${encodeURIComponent(k)}`;
+  } else {
+    // 同点 → 隠しキャラのキーで遷移
+    const hk = decideHiddenFromTies(tops); // 例: "yamahasg", "casino" など
+    location.href = `result.html?t=${encodeURIComponent(hk)}`;
+  }
+}); // ← これが抜けてた！
 
-  // 単独トップ
-if (tops.length === 1) {
-  const k = tops[0]; // 例: "strat"
-  // （演出したいならここで popResult($res) などを呼んでから…）
-  location.href = `result.html?t=${encodeURIComponent(k)}`;
-} else {
-  // 同点 → 隠しキャラキー（例: "yamahasg", "casino"...）
-  const hk = decideHiddenFromTies(tops);
-  location.href = `result.html?t=${encodeURIComponent(hk)}`;
-}
