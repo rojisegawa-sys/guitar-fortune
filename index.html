@@ -1,34 +1,80 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ギター占い</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>診断結果｜ギター占い</title>
 
-  <!-- フォント -->
-  <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;700;900&family=Fredoka:wght@700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css" />
+  <!-- 既存CSSをそのまま再利用 -->
+  <link rel="stylesheet" href="style.css?v=7" />
+
+  <!-- OGP（任意） -->
+  <meta property="og:title" content="ギター占い｜診断結果">
+  <meta property="og:description" content="あなたのギター気質は…？">
+  <meta property="og:image" content="og.jpg">
+  <meta name="twitter:card" content="summary_large_image">
 </head>
 <body>
   <header class="hero">
-    <h1>ギター占い｜16タイプ診断</h1>
-    <p class="subtitle">12問に答えるとタイプが分かるよ。ひみつの結果が出ることも…🎸</p>
+    <h1>ギター占い｜診断結果</h1>
+    <p class="subtitle">あなたにぴったりの一本は…？🎸</p>
   </header>
 
-  <div id="quiz-container"></div>
-  <button id="submit">診断する</button>
-  <div id="result"></div>
+  <div id="result" class="show">
+    <!-- JSで埋め込み -->
+  </div>
 
-  <!-- スクリプト -->
-  <script src="script.js?v=5"></script>
+  <div class="actions" style="max-width:760px;margin:12px auto 0;text-align:center;">
+    <a href="./" class="btn">もう一度診断</a>
+    <a id="shareX" target="_blank" class="btn">Xでシェア</a>
+  </div>
 
-  <!-- 演出レイヤー（1つずつだけ置く） -->
-  <canvas id="fx-confetti"></canvas>
-  <div id="fx-notes"></div>
-  <div id="fx-stickers"></div>
+  <script>
+    // 受け取ったキー（例: strat / lespaul / casino ...）
+    const params = new URLSearchParams(location.search);
+    const key = params.get("t");
 
-  <!-- 効果音（不要なら後でSOUND_ON=falseに） -->
-  <audio id="sfx-pop" src="https://cdn.jsdelivr.net/gh/ume-helpers/sfx/pop.mp3" preload="auto"></audio>
-  <audio id="sfx-yeah" src="https://cdn.jsdelivr.net/gh/ume-helpers/sfx/yeah.mp3" preload="auto"></audio>
+    // タイプ辞書（通常12タイプ＋隠しキャラ4）
+    const MAP = {
+      // --- 通常タイプ（12）---
+      strat:     { title: "Fender Stratocaster",  desc: "バランス良く社交的。対応力が高く、どんな場でも自分の色を出せる。" },
+      tele:      { title: "Fender Telecaster",    desc: "誠実で実直。芯の強さと素朴な魅力で信頼を集める。" },
+      lespaul:   { title: "Gibson Les Paul",      desc: "存在感と説得力。厚みのある言葉と行動で周囲を引っ張る。" },
+      es335:     { title: "Gibson ES-335",        desc: "余裕と気品。落ち着きと柔らかさの両立で場をまとめる。" },
+      ricken:    { title: "Rickenbacker",         desc: "センス派。独自のこだわりとキラリと光る個性で魅了する。" },
+      ibanez:    { title: "Ibanez",               desc: "先鋭・テク志向。新しい挑戦を楽しむ開拓タイプ。" },
+      jazzmaster:{ title: "Fender Jazzmaster",    desc: "オルタナ系。ひと味違う発想で創造性を発揮。" },
+      prs:       { title: "PRS Custom 24",        desc: "高品位・万能型。仕上げ重視で完成度を高める職人肌。" },
+      sg:        { title: "Gibson SG",            desc: "直球勝負。スピード感と熱量で周囲を巻き込む。" },
+      dane:      { title: "Danelectro",           desc: "軽快で遊び心。発想が柔らかく、ムードメーカー。" },
+      mustang:   { title: "Fender Mustang",       desc: "身軽なチャレンジャー。小回りと瞬発力が武器。" },
+      pacifica:  { title: "Yamaha Pacifica",      desc: "バランス型。実用性と安定感で成果を出す堅実派。" },
+
+      // --- 隠しキャラ（4）---
+      casino:    { title: "Epiphone Casino",      desc: "魅了と多面性。人を惹きつける交渉上手。" },
+      yamahasg:  { title: "Yamaha SG",            desc: "重厚で堅実。腰の据わった安定の軸。" },
+      lpjr:      { title: "Gibson Les Paul Junior", desc: "最小限で最大。本質を突くミニマリスト。" },
+      explorer:  { title: "Gibson Explorer",      desc: "開拓精神。未知を切り開くパイオニア。" },
+    };
+
+    // 安全に取得（未知キーはトップへ戻す）
+    const data = MAP[key];
+    if (!data) {
+      location.replace("./"); // 不正なアクセスはトップへ
+    }
+
+    // 結果描画
+    const $res = document.getElementById("result");
+    $res.innerHTML = `
+      <span class="result-badge">診断結果</span>
+      <strong>${data.title}</strong> — ${data.desc}
+    `;
+
+    // シェア（X）
+    const shareUrl = location.origin + location.pathname.replace(/result\.html$/,'');
+    const shareText = `私は『${data.title}』タイプでした！ #ギター占い`;
+    document.getElementById("shareX").href =
+      `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+  </script>
 </body>
 </html>
