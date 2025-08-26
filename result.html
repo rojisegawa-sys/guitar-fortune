@@ -28,61 +28,19 @@
   </div>
 
   <script>
-    // 受け取ったキー（例: strat / lespaul / casino ...）
-    const params = new URLSearchParams(location.search);
-    const key = params.get("t");
+  // …（MAPの定義はそのまま）
+  const data = MAP[new URLSearchParams(location.search).get("t")];
+  if (!data) location.replace("./");
 
-    // タイプ辞書（12＋隠し4）
-    const MAP = {
-      strat:{ title:"Fender Stratocaster",  desc:"バランス良く社交的。対応力が高く、どんな場でも自分の色を出せる。" , icon:"🎸" },
-      tele:{ title:"Fender Telecaster",    desc:"誠実で実直。芯の強さと素朴な魅力で信頼を集める。" , icon:"⭐" },
-      lespaul:{ title:"Gibson Les Paul",    desc:"存在感と説得力。厚みのある言葉と行動で周囲を引っ張る。" , icon:"🔥" },
-      es335:{ title:"Gibson ES-335",        desc:"余裕と気品。落ち着きと柔らかさの両立で場をまとめる。" , icon:"🎶" },
-      ricken:{ title:"Rickenbacker",         desc:"センス派。独自のこだわりとキラリと光る個性で魅了する。" , icon:"✨" },
-      ibanez:{ title:"Ibanez",               desc:"先鋭・テク志向。新しい挑戦を楽しむ開拓タイプ。" , icon:"⚡" },
-      jazzmaster:{ title:"Fender Jazzmaster",desc:"オルタナ系。ひと味違う発想で創造性を発揮。" , icon:"🌊" },
-      prs:{ title:"PRS Custom 24",           desc:"高品位・万能型。仕上げ重視で完成度を高める職人肌。" , icon:"💎" },
-      sg:{ title:"Gibson SG",                desc:"直球勝負。スピード感と熱量で周囲を巻き込む。" , icon:"🚀" },
-      dane:{ title:"Danelectro",             desc:"軽快で遊び心。発想が柔らかく、ムードメーカー。" , icon:"🍭" },
-      mustang:{ title:"Fender Mustang",      desc:"身軽なチャレンジャー。小回りと瞬発力が武器。" , icon:"🏃" },
-      pacifica:{ title:"Yamaha Pacifica",    desc:"バランス型。実用性と安定感で成果を出す堅実派。" , icon:"🧩" },
-      casino:{ title:"Epiphone Casino",      desc:"魅了と多面性。人を惹きつける交渉上手。" , icon:"🎰" },
-      yamahasg:{ title:"Yamaha SG",          desc:"重厚で堅実。腰の据わった安定の軸。" , icon:"🛡️" },
-      lpjr:{ title:"Gibson Les Paul Junior", desc:"最小限で最大。本質を突くミニマリスト。" , icon:"🔧" },
-      explorer:{ title:"Gibson Explorer",    desc:"開拓精神。未知を切り開くパイオニア。" , icon:"🧭" },
-    };
+  document.title = `診断結果｜${data.title}｜ギター占い`;
 
-    const data = MAP[key];
-    if (!data) {
-      location.replace("./");
-    }
+  const $res = document.getElementById("result");
+  $res.innerHTML = `
+    <span class="result-badge">診断結果</span>
+    <strong>${data.icon || "🎸"} ${data.title}</strong> — ${data.desc}
+  `;
+  requestAnimationFrame(()=> $res.classList.add('show'));
+</script>
 
-    // タイトルに反映
-    document.title = `診断結果｜${data.title}｜ギター占い`;
-
-    // 結果描画（後から .show を付けてチラつき防止）
-    const $res = document.getElementById("result");
-    $res.innerHTML = `
-      <span class="result-badge">診断結果</span>
-      <strong>${data.icon || "🎸"} ${data.title}</strong> — ${data.desc}
-    `;
-    requestAnimationFrame(()=> $res.classList.add('show'));
-
-    // シェア・コピー
-    const shareUrl = location.origin + location.pathname.replace(/result\.html$/,'');
-    const shareText = `私は『${data.title}』タイプでした！ #ギター占い`;
-    const share = document.getElementById("shareX");
-    share.href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
-    share.rel = "noopener";
-
-    document.getElementById('copyLink').addEventListener('click', async () => {
-      try{
-        await navigator.clipboard.writeText(shareUrl);
-        const btn = document.getElementById('copyLink');
-        btn.textContent = 'コピーしました！';
-        setTimeout(()=> btn.textContent='リンクをコピー', 1600);
-      }catch(e){ alert('コピーに失敗しました'); }
-    });
-  </script>
 </body>
 </html>
