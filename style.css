@@ -132,44 +132,31 @@ body{
   padding:16px; margin-top:14px;
 }
 
-/* 質問カードのコントラスト・余白を微強化 */
+/* ===== 枠を軽めに調整 ===== */
+
+/* 質問カード */
 .question{
-  border:4px solid #000; background:#fff;
-  box-shadow:0 10px 0 #00000020;
-}
-.question p{
-  font-size:18px;
-}
-
-/* ラジオの視認性UP（囲み） */
-.question label{
-  border:3px dashed transparent;
-}
-.question label:hover{
-  background:#fffbe8; border-color:#ffc54d;
+  border:2px solid #000;   /* ← 4px から 2px に */
+  border-radius:18px;
+  padding:14px;
+  box-shadow:0 6px 0 #00000018;  /* 影も軽く */
 }
 
-/* 送信ボタンを主役に */
-button#submit{
-  margin-top:16px;
-  filter: drop-shadow(0 10px 12px rgba(45,130,255,.25));
+/* 結果ボックス */
+#result{
+  border:2px solid #000;   /* ← 5px から 2px に */
+  border-radius:18px;
+  box-shadow:0 8px 0 #00000018, 0 18px 28px rgba(0,0,0,.15);
 }
 
-/* 結果ボックスに“アイコン枠”追加（result.htmlでも効く） */
-#result strong{
-  display:inline-flex; align-items:center; gap:.4em;
-  padding:4px 10px; border:3px solid #000; border-radius:14px; background:#fff;
-  box-shadow:0 6px 0 #00000018;
+/* バッジ */
+.result-badge{
+  border:2px solid #000;   /* ← 3px から 2px に */
+  box-shadow:0 4px 0 #00000020;
 }
 
-/* フッター風の余白（ページ下が寂しくならない） */
-body::after{
-  content:""; display:block; height:40px;
-}
-
-/* モバイル微調整 */
-@media (max-width:520px){
-  .decals span{ width:34px; height:34px; font-size:18px; }
-  #quiz-container{ padding:12px; }
-  .question p{ font-size:17px; }
+/* ボタン */
+button#submit,
+.actions a, .actions button{
+  border:2px solid #000;   /* ← 4px から 2px に */
 }
