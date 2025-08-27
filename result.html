@@ -1,63 +1,113 @@
-<script>
-  // 受け取ったキー（例: strat / lespaul / casino ...）
-  const params = new URLSearchParams(location.search);
-  const key = params.get("t");
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>診断結果｜ギター占い</title>
 
-  // タイプ辞書（通常12＋隠し4＋補助flyingvも表示対応）
-  const MAP = {
-    strat:{ title:"Fender Stratocaster",  desc:"バランス良く社交的。対応力が高く、どんな場でも自分の色を出せる。", icon:"🎸" },
-    tele:{ title:"Fender Telecaster",    desc:"誠実で実直。芯の強さと素朴な魅力で信頼を集める。", icon:"⭐" },
-    lespaul:{ title:"Gibson Les Paul",    desc:"存在感と説得力。厚みのある言葉と行動で周囲を引っ張る。", icon:"🔥" },
-    es335:{ title:"Gibson ES-335",        desc:"余裕と気品。落ち着きと柔らかさの両立で場をまとめる。", icon:"🎶" },
-    ricken:{ title:"Rickenbacker",         desc:"センス派。独自のこだわりとキラリと光る個性で魅了する。", icon:"✨" },
-    ibanez:{ title:"Ibanez",               desc:"先鋭・テク志向。新しい挑戦を楽しむ開拓タイプ。", icon:"⚡" },
-    jazzmaster:{ title:"Fender Jazzmaster",desc:"オルタナ系。ひと味違う発想で創造性を発揮。", icon:"🌊" },
-    prs:{ title:"PRS Custom 24",           desc:"高品位・万能型。仕上げ重視で完成度を高める職人肌。", icon:"💎" },
-    sg:{ title:"Gibson SG",                desc:"直球勝負。スピード感と熱量で周囲を巻き込む。", icon:"🚀" },
-    dane:{ title:"Danelectro",             desc:"軽快で遊び心。発想が柔らかく、ムードメーカー。", icon:"🍭" },
-    mustang:{ title:"Fender Mustang",      desc:"身軽なチャレンジャー。小回りと瞬発力が武器。", icon:"🏃" },
-    pacifica:{ title:"Yamaha Pacifica",    desc:"バランス型。実用性と安定感で成果を出す堅実派。", icon:"🧩" },
-    // 隠しキャラ
-    casino:{ title:"Epiphone Casino",      desc:"魅了と多面性。人を惹きつける交渉上手。", icon:"🎰" },
-    yamahasg:{ title:"Yamaha SG",          desc:"重厚で堅実。腰の据わった安定の軸。", icon:"🛡️" },
-    lpjr:{ title:"Gibson Les Paul Junior", desc:"最小限で最大。本質を突くミニマリスト。", icon:"🔧" },
-    explorer:{ title:"Gibson Explorer",    desc:"開拓精神。未知を切り開くパイオニア。", icon:"🧭" },
-    // 補助タイプ（単独トップ時の保険）
-    flyingv:{ title:"Gibson Flying V",     desc:"勢いよく前へ。型にとらわれず道を切り開く挑戦者。", icon:"⚡" },
-  };
+  <!-- CSS（キャッシュ更新のため v=9 に） -->
+  <link rel="stylesheet" href="style.css?v=9" />
 
-  const data = MAP[key];
-  if (!data) {
-    // 不正アクセスや ?t= が無い時はトップへ戻す
-    location.replace("./");
-  } else {
-    // タイトル・本文描画
-    document.title = `診断結果｜${data.title}｜ギター占い`;
+  <!-- OGP（任意） -->
+  <meta property="og:title" content="ギター占い｜診断結果">
+  <meta property="og:description" content="あなたのギター気質は…？">
+  <meta property="og:image" content="og.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+</head>
+<body>
+  <header class="hero">
+    <h1>ギター占い｜診断結果</h1>
+    <p class="subtitle">あなたにぴったりの一本は…？🎸</p>
+  </header>
+
+  <div id="result">読み込み中…</div>
+
+  <div class="actions" style="max-width:860px;margin:12px auto 0;text-align:center;">
+    <a href="./" class="btn" rel="noopener">🔁 もう一度診断</a>
+    <a id="shareX" target="_blank" class="btn" rel="noopener">🕊️ Xでシェア</a>
+    <button id="copyLink" class="btn">🔗 リンクをコピー</button>
+  </div>
+
+  <script>
+  (function () {
+    // クエリ取得
+    const key = new URLSearchParams(location.search).get("t");
+
+    // タイプ辞書（12＋隠し4＋補助flyingv）
+    const MAP = {
+      strat:{ title:"Fender Stratocaster",  desc:"バランス良く社交的。対応力が高く、どんな場でも自分の色を出せる。", icon:"🎸" },
+      tele:{ title:"Fender Telecaster",    desc:"誠実で実直。芯の強さと素朴な魅力で信頼を集める。", icon:"⭐" },
+      lespaul:{ title:"Gibson Les Paul",    desc:"存在感と説得力。厚みのある言葉と行動で周囲を引っ張る。", icon:"🔥" },
+      es335:{ title:"Gibson ES-335",        desc:"余裕と気品。落ち着きと柔らかさの両立で場をまとめる。", icon:"🎶" },
+      ricken:{ title:"Rickenbacker",         desc:"センス派。独自のこだわりとキラリと光る個性で魅了する。", icon:"✨" },
+      ibanez:{ title:"Ibanez",               desc:"先鋭・テク志向。新しい挑戦を楽しむ開拓タイプ。", icon:"⚡" },
+      jazzmaster:{ title:"Fender Jazzmaster",desc:"オルタナ系。ひと味違う発想で創造性を発揮。", icon:"🌊" },
+      prs:{ title:"PRS Custom 24",           desc:"高品位・万能型。仕上げ重視で完成度を高める職人肌。", icon:"💎" },
+      sg:{ title:"Gibson SG",                desc:"直球勝負。スピード感と熱量で周囲を巻き込む。", icon:"🚀" },
+      dane:{ title:"Danelectro",             desc:"軽快で遊び心。発想が柔らかく、ムードメーカー。", icon:"🍭" },
+      mustang:{ title:"Fender Mustang",      desc:"身軽なチャレンジャー。小回りと瞬発力が武器。", icon:"🏃" },
+      pacifica:{ title:"Yamaha Pacifica",    desc:"バランス型。実用性と安定感で成果を出す堅実派。", icon:"🧩" },
+      // 隠しキャラ
+      casino:{ title:"Epiphone Casino",      desc:"魅了と多面性。人を惹きつける交渉上手。", icon:"🎰" },
+      yamahasg:{ title:"Yamaha SG",          desc:"重厚で堅実。腰の据わった安定の軸。", icon:"🛡️" },
+      lpjr:{ title:"Gibson Les Paul Junior", desc:"最小限で最大。本質を突くミニマリスト。", icon:"🔧" },
+      explorer:{ title:"Gibson Explorer",    desc:"開拓精神。未知を切り開くパイオニア。", icon:"🧭" },
+      // 単独トップ保険
+      flyingv:{ title:"Gibson Flying V",     desc:"勢いよく前へ。型にとらわれず道を切り開く挑戦者。", icon:"⚡" },
+    };
+
     const $res = document.getElementById("result");
-    $res.innerHTML = `
-      <span class="result-badge">診断結果</span>
-      <strong>${data.icon || "🎸"} ${data.title}</strong> — ${data.desc}
-    `;
-    // 初期チラつき防止：描画後にアニメ付与
-    requestAnimationFrame(()=> $res.classList.add('show'));
 
-    // 共有リンク（トップURLを共有）
-    const shareUrl = location.origin + location.pathname.replace(/result\.html$/,'');
-    const shareText = `私は『${data.title}』タイプでした！ #ギター占い`;
-    const share = document.getElementById("shareX");
-    if (share) share.href =
-      `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
-    const copyBtn = document.getElementById('copyLink');
-    if (copyBtn){
-      copyBtn.addEventListener('click', async () => {
-        try{
-          await navigator.clipboard.writeText(shareUrl);
-          const old = copyBtn.textContent;
-          copyBtn.textContent = 'コピーしました！';
-          setTimeout(()=> copyBtn.textContent = old, 1600);
-        }catch(e){ alert('コピーに失敗しました'); }
-      });
+    try {
+      // クエリがない／未知キーのときは丁寧に案内（真っ白回避）
+      if (!key || !MAP[key]) {
+        $res.innerHTML = `
+          <span class="result-badge">お知らせ</span>
+          結果キーが見つかりませんでした。<br>
+          <a href="./" class="btn" style="margin-top:10px">トップへ戻る</a>
+        `;
+        return;
+      }
+
+      const data = MAP[key];
+      document.title = `診断結果｜${data.title}｜ギター占い`;
+
+      // 結果描画
+      $res.innerHTML = `
+        <span class="result-badge">診断結果</span>
+        <strong>${data.icon || "🎸"} ${data.title}</strong> — ${data.desc}
+      `;
+      requestAnimationFrame(() => $res.classList.add('show'));
+
+      // 共有＆コピー（トップURLを共有）
+      const shareUrl = location.origin + location.pathname.replace(/result\.html$/,'');
+      const shareText = `私は『${data.title}』タイプでした！ #ギター占い`;
+      const share = document.getElementById("shareX");
+      if (share) share.href =
+        `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+
+      const copyBtn = document.getElementById('copyLink');
+      if (copyBtn){
+        copyBtn.addEventListener('click', async () => {
+          try{
+            await navigator.clipboard.writeText(shareUrl);
+            const old = copyBtn.textContent;
+            copyBtn.textContent = 'コピーしました！';
+            setTimeout(()=> copyBtn.textContent = old, 1600);
+          }catch(e){ alert('コピーに失敗しました'); }
+        });
+      }
+    } catch (err) {
+      // 何かあっても真っ白にしない
+      console.error(err);
+      $res.innerHTML = `
+        <span class="result-badge">エラー</span>
+        予期しないエラーが発生しました。<br>
+        <small style="opacity:.8">詳細: ${String(err.message || err)}</small><br>
+        <a href="./" class="btn" style="margin-top:10px">トップへ戻る</a>
+      `;
     }
-  }
-</script>
-
+  })();
+  </script>
+</body>
+</html>
