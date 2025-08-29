@@ -109,5 +109,87 @@
     }
   })();
   </script>
+<script type="module">
+  import { GUITARS } from "./data/guitarTypes.js";
+
+  // --- タイプ名の正規化（クエリや保存値のゆらぎ吸収） ---
+  function normalize(raw){
+    let s = (raw || "").toLowerCase().trim();
+    s = s.replace(/\s+/g, "");
+    s = s.replace(/^(fender|gibson|epiphone|yamaha|prs)/, ""); // 先頭ブランド除去
+    const map = {
+      "es335": "es-335",
+      "lespaul": "les-paul",
+      "prscustom24": "prs-custom-24",
+      "flyingv": "flying-v",
+      "yamahasg": "yamaha-sg",
+      "lespauljr": "les-paul-junior",
+      "lespauljunior": "les-paul-junior",
+      "yamahapacifica": "yamaha-pacifica"
+    };
+    return map[s] || s;
+  }
+
+  // --- 1) URL ?type=... or 2) localStorage('guitar_diagnosis.resultKey') ---
+  const params = new URLSearchParams(location.search);
+  let key = normalize(params.get("type"));
+  if(!key){
+    try{
+      const saved = JSON.parse(localStorage.getItem("guitar_diagnosis") || "{}");
+      if (saved.resultKey) key = normalize(saved.resultKey);
+    }catch(_){}
+  }
+  if(!GUITARS[key]) key = "stratocaster";
+  const d = GUITARS[key];
+
+  // --- スタイルをページに注入（衝突しないプレフィックス） ---
+  const style = document.createElement("style");
+  style.textContent = `
+    .g-detail-card{max-width:1000px;margin:24px auto;padding:20px;border-radius:16px;
+      background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.12)}
+    .g-hero{display:grid;grid-template-columns:1.2fr 1fr;gap:16px;align-items:stretch}
+    .g-img{width:100%;height:100%;object-fit:contain;background:rgba(255,255,255,0.04);border-radius:12px}
+    .g-info h2{margin:.2rem 0;font-size:1.6rem;font-weight:800}
+    .g-tag{display:inline-block;margin-bottom:.5rem;padding:.25rem .6rem;border-radius:999px;
+      font-size:.8rem;background:rgba(147,197,253,.15);border:1px solid rgba(147,197,253,.35)}
+    .g-tagline{opacity:.85;margin:.25rem 0 1rem}
+    .g-persona{opacity:.9}
+    .g-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+    .g-sec{padding:12px;border-radius:12px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.08)}
+    .g-sec h3{margin:.2rem 0 .4rem;font-size:1rem;opacity:.9}
+    .g-sec ul{margin:.2rem 0 .4rem 1.2rem}
+    @media (max-width:860px){.g-hero{grid-template-columns:1fr}}
+  `;
+  document.head.appendChild(style);
+
+  // --- カードを生成してページ末尾に追加 ---
+  const host = document.querySelector("main") || document.querySelector("#app") || document.body;
+  const card = document.createElement("section");
+  card.className = "g-detail-card";
+  card.innerHTML = `
+    <div class="g-hero">
+      <img class="g-img" src="${d.image}" alt="${d.name}">
+      <div class="g-info">
+        <span class="g-tag">GUITAR TYPE</span>
+        <h2>${d.name}</h2>
+        <p class="g-tagline">${d.tagline}</p>
+        <p class="g-persona">${d.persona}</p>
+        <div class="g-grid">
+          <div class="g-sec">
+            <h3>強み</h3>
+            <ul>${d.strengths.map(s=>`<li>${s}</li>`).join("")}</ul>
+          </div>
+          <div class="g-sec">
+            <h3>気をつけたい点</h3>
+            <ul>${d.caution.map(s=>`<li>${s}</li>`).join("")}</ul>
+          </div>
+        </div>
+        <div class="g-sec"><h3>アドバイス（仕事/恋愛）</h3><p>${d.loveWorkTips}</p></div>
+        <div class="g-sec"><h3>相性が良いタイプ</h3><p>${d.matches.join(" / ")}</p></div>
+      </div>
+    </div>
+  `;
+  host.appendChild(card);
+</script>
 </body>
 </html>
