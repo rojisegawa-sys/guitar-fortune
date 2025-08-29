@@ -112,37 +112,83 @@
 <script type="module">
   import { GUITARS } from "./data/guitarTypes.js";
 
-  // --- タイプ名の正規化（クエリや保存値のゆらぎ吸収） ---
+  // --- タイプ名を正規化して揺れを吸収 ---
   function normalize(raw){
     let s = (raw || "").toLowerCase().trim();
-    s = s.replace(/\s+/g, "");
-    s = s.replace(/^(fender|gibson|epiphone|yamaha|prs)/, ""); // 先頭ブランド除去
-    const map = {
+
+    // 早期マッピング（ブランド付き・略称対応）
+    const quick = s.replace(/\s+/g,"");
+    const quickMap = {
       "es335": "es-335",
-      "lespaul": "les-paul",
-      "prscustom24": "prs-custom-24",
       "flyingv": "flying-v",
+      "prscustom24": "prs-custom-24",
+      "yamahapacifica": "yamaha-pacifica",
       "yamahasg": "yamaha-sg",
+      "yamaha sg": "yamaha-sg",
       "lespauljr": "les-paul-junior",
       "lespauljunior": "les-paul-junior",
-      "yamahapacifica": "yamaha-pacifica"
+      "les paul jr": "les-paul-junior",
+      "les paul junior": "les-paul-junior",
+    };
+    if (quickMap[quick]) return quickMap[quick];
+
+    // ブランド名を先頭から除去（ただしYamaha SGはquickMapで先に保護済み）
+    s = s.replace(/^(fender|gibson|epiphone|prs|yamaha)/, "");
+    s = s.replace(/\s+/g,""); // スペース除去
+
+    // ゆれ対応
+    const map = {
+      "lespaul": "les-paul",
+      "es335": "es-335",
+      "prscustom24": "prs-custom-24",
+      "flyingv": "flying-v",
+      "yamahapacifica": "yamaha-pacifica",
+      "casino": "casino",
+      "explorer": "explorer",
+      "rickenbacker": "rickenbacker",
+      "telecaster": "telecaster",
+      "stratocaster": "stratocaster",
+      "jazzmaster": "jazzmaster",
+      "ibanez": "ibanez",
+      "sg": "sg",
+      "danelectro": "danelectro",
+      "mustang": "mustang",
+      "pacifica": "yamaha-pacifica" // 俗称
     };
     return map[s] || s;
   }
 
-  // --- 1) URL ?type=... or 2) localStorage('guitar_diagnosis.resultKey') ---
-  const params = new URLSearchParams(location.search);
-  let key = normalize(params.get("type"));
-  if(!key){
-    try{
-      const saved = JSON.parse(localStorage.getItem("guitar_diagnosis") || "{}");
-      if (saved.resultKey) key = normalize(saved.resultKey);
-    }catch(_){}
+  // --- キーを決定する ---
+  function getKey(){
+    const params = new URLSearchParams(location.search);
+    let key = normalize(params.get("type"));
+
+    // localStorage fallback
+    if(!key){
+      try{
+        const saved = JSON.parse(localStorage.getItem("guitar_diagnosis")||"{}");
+        if (saved.resultKey) key = normalize(saved.resultKey);
+      }catch(_){}
+    }
+
+    // ページ上の診断結果名から拾う（#resultName があればベスト）
+    if(!key){
+      const nameEl =
+        document.querySelector("#resultName") ||
+        document.querySelector(".result-name, .resultTitle, .badge, .pill, h2, h3");
+      if(nameEl && nameEl.textContent){
+        key = normalize(nameEl.textContent);
+      }
+    }
+
+    if(!GUITARS[key]) key = "stratocaster"; // デフォルト
+    return key;
   }
-  if(!GUITARS[key]) key = "stratocaster";
+
+  const key = getKey();
   const d = GUITARS[key];
 
-  // --- スタイルをページに注入（衝突しないプレフィックス） ---
+  // --- スタイル注入 ---
   const style = document.createElement("style");
   style.textContent = `
     .g-detail-card{max-width:1000px;margin:24px auto;padding:20px;border-radius:16px;
