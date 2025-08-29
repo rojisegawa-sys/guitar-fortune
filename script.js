@@ -2,7 +2,7 @@
 const SOUND_ON = false; // 効果音を使うなら true
 function play(id){ if(!SOUND_ON) return; const el=document.getElementById(id); if(el){ el.currentTime=0; el.play().catch(()=>{});} }
 
-// ===== タイプ名辞書（キー→表示名）=====
+// ===== タイプ名辞書（キー→表示名）※UI表示に使う場合のみ =====
 const TYPE_NAMES = {
   strat:"Fender Stratocaster", tele:"Fender Telecaster", lespaul:"Gibson Les Paul",
   es335:"Gibson ES-335", ricken:"Rickenbacker", ibanez:"Ibanez",
@@ -38,6 +38,29 @@ function decideHiddenFromTies(tops){
   const seed=tops.slice().sort().join("|");
   return cands[ stableHash(seed) % cands.length ];
 }
+
+// ===== 診断キー → 結果ページ用キー（guitarTypes.js のキー）へ変換 =====
+const MAP_TO_RESULT_KEY = {
+  // 本編（13）
+  strat: "stratocaster",
+  tele: "telecaster",
+  lespaul: "les-paul",
+  es335: "es-335",
+  ricken: "rickenbacker",
+  ibanez: "ibanez",
+  jazzmaster: "jazzmaster",
+  prs: "prs-custom-24",
+  sg: "sg",
+  dane: "danelectro",
+  mustang: "mustang",
+  pacifica: "yamaha-pacifica",
+  flyingv: "flying-v",
+  // 隠し（4）
+  casino: "casino",
+  yamahasg: "yamaha-sg",
+  lpjr: "les-paul-junior",
+  explorer: "explorer",
+};
 
 // ===== 質問（12問）=====
 const questions = [
@@ -153,14 +176,19 @@ document.getElementById('submit').addEventListener('click', () => {
   const max = Math.max(...entries.map(([, v]) => v));
   const tops = entries.filter(([, v]) => v === max).map(([k]) => k);
 
-  const go = (key) => setTimeout(() => {
-    location.href = `result.html?t=${encodeURIComponent(key)}`;
-  }, 450); // 軽く待って遷移
+  // 診断キー → 結果ページ用キーに変換して保存＆遷移
+  const go = (diagnosisKey) => setTimeout(() => {
+    const resultKey = MAP_TO_RESULT_KEY[diagnosisKey] || "stratocaster";
+    // ② 保存（result.html は localStorage または URL から読み取る）
+    localStorage.setItem("guitar_diagnosis", JSON.stringify({ resultKey }));
+    // URLパラメータは 'type' に統一
+    location.href = `result.html?type=${encodeURIComponent(resultKey)}`;
+  }, 450);
 
   if (tops.length === 1) {
     go(tops[0]);
   } else {
-    const hk = decideHiddenFromTies(tops);
+    const hk = decideHiddenFromTies(tops); // 隠しキャラ決定
     go(hk);
   }
 });
