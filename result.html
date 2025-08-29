@@ -112,83 +112,62 @@
 <script type="module">
   import { GUITARS } from "./data/guitarTypes.js";
 
-  // --- タイプ名を正規化して揺れを吸収 ---
-  function normalize(raw){
-    let s = (raw || "").toLowerCase().trim();
-
-    // 早期マッピング（ブランド付き・略称対応）
-    const quick = s.replace(/\s+/g,"");
-    const quickMap = {
-      "es335": "es-335",
-      "flyingv": "flying-v",
-      "prscustom24": "prs-custom-24",
-      "yamahapacifica": "yamaha-pacifica",
-      "yamahasg": "yamaha-sg",
-      "yamaha sg": "yamaha-sg",
-      "lespauljr": "les-paul-junior",
-      "lespauljunior": "les-paul-junior",
-      "les paul jr": "les-paul-junior",
-      "les paul junior": "les-paul-junior",
-    };
-    if (quickMap[quick]) return quickMap[quick];
-
-    // ブランド名を先頭から除去（ただしYamaha SGはquickMapで先に保護済み）
-    s = s.replace(/^(fender|gibson|epiphone|prs|yamaha)/, "");
-    s = s.replace(/\s+/g,""); // スペース除去
-
-    // ゆれ対応
-    const map = {
-      "lespaul": "les-paul",
-      "es335": "es-335",
-      "prscustom24": "prs-custom-24",
-      "flyingv": "flying-v",
-      "yamahapacifica": "yamaha-pacifica",
-      "casino": "casino",
-      "explorer": "explorer",
-      "rickenbacker": "rickenbacker",
-      "telecaster": "telecaster",
-      "stratocaster": "stratocaster",
-      "jazzmaster": "jazzmaster",
-      "ibanez": "ibanez",
-      "sg": "sg",
-      "danelectro": "danelectro",
-      "mustang": "mustang",
-      "pacifica": "yamaha-pacifica" // 俗称
-    };
-    return map[s] || s;
-  }
-
-  // --- キーを決定する ---
-  function getKey(){
+  // ---- キー取得：URL > localStorage の順。DOMは読まない ----
+  function getKeyStrict() {
     const params = new URLSearchParams(location.search);
-    let key = normalize(params.get("type"));
-
-    // localStorage fallback
-    if(!key){
-      try{
-        const saved = JSON.parse(localStorage.getItem("guitar_diagnosis")||"{}");
-        if (saved.resultKey) key = normalize(saved.resultKey);
-      }catch(_){}
+    let key = params.get("type")?.trim().toLowerCase() || "";
+    if (!key) {
+      try {
+        const saved = JSON.parse(localStorage.getItem("guitar_diagnosis") || "{}");
+        if (saved && typeof saved.resultKey === "string") key = saved.resultKey.toLowerCase();
+      } catch {}
     }
-
-    // ページ上の診断結果名から拾う（#resultName があればベスト）
-    if(!key){
-      const nameEl =
-        document.querySelector("#resultName") ||
-        document.querySelector(".result-name, .resultTitle, .badge, .pill, h2, h3");
-      if(nameEl && nameEl.textContent){
-        key = normalize(nameEl.textContent);
-      }
-    }
-
-    if(!GUITARS[key]) key = "stratocaster"; // デフォルト
     return key;
   }
 
-  const key = getKey();
+  // ---- 表記ゆれ補正（必要最小限） ----
+  function normalize(key) {
+    const s = (key || "").replace(/\s+/g, "");
+    const map = {
+      "es335":"es-335",
+      "flyingv":"flying-v",
+      "prscustom24":"prs-custom-24",
+      "yamahapacifica":"yamaha-pacifica",
+      "yamahasg":"yamaha-sg",
+      "lespaul":"les-paul",
+      "lespauljr":"les-paul-junior",
+      "lespauljunior":"les-paul-junior",
+      "pacifica":"yamaha-pacifica"
+    };
+    return map[s] || key;
+  }
+
+  let key = normalize(getKeyStrict());
+
+  // 不明だったら明示的にエラー表示（自動Stratフォールバックはしない）
+  if (!GUITARS[key]) {
+    console.error("[guitar-fortune] Unknown result key:", key);
+    const err = document.createElement("div");
+    err.style.maxWidth = "1000px";
+    err.style.margin = "24px auto";
+    err.style.padding = "16px";
+    err.style.borderRadius = "12px";
+    err.style.border = "1px solid rgba(255,0,0,.25)";
+    err.style.background = "rgba(255,0,0,.06)";
+    err.style.color = "#ffd5d5";
+    err.innerHTML = `
+      <strong>結果キーが見つかりませんでした。</strong><br>
+      URLに <code>?type=telecaster</code> のように付けるか、集計時に
+      <code>localStorage.setItem("guitar_diagnosis", JSON.stringify({ resultKey: "telecaster" }))</code>
+      を保存してください。
+    `;
+    (document.querySelector("main") || document.body).appendChild(err);
+    throw new Error("Unknown result key");
+  }
+
   const d = GUITARS[key];
 
-  // --- スタイル注入 ---
+  // ---- スタイル注入 ----
   const style = document.createElement("style");
   style.textContent = `
     .g-detail-card{max-width:1000px;margin:24px auto;padding:20px;border-radius:16px;
@@ -208,7 +187,7 @@
   `;
   document.head.appendChild(style);
 
-  // --- カードを生成してページ末尾に追加 ---
+  // ---- カード生成 ----
   const host = document.querySelector("main") || document.querySelector("#app") || document.body;
   const card = document.createElement("section");
   card.className = "g-detail-card";
