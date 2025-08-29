@@ -144,6 +144,60 @@ if ($res) {
     </div>
   `;
   host.appendChild(card);
+  // ---- 共有リンクとコピー機能 ----
+
+// 共有するURL（トップ＝index.html のある場所を想定）
+const baseUrl = new URL(".", location.href).href; // 例: https://user.github.io/repo/
+const shareText = `私は『${d.name}』タイプでした！ #ギター占い`;
+
+// X(Twitter)：intent URL をセット
+const shareX = document.getElementById("shareX");
+if (shareX) {
+  const intent = new URL("https://twitter.com/intent/tweet");
+  intent.searchParams.set("text", shareText);
+  intent.searchParams.set("url", baseUrl);
+  shareX.href = intent.toString();
+
+  // Web Share API が使えるなら、クリックでネイティブ共有に切替
+  if (navigator.share) {
+    shareX.addEventListener("click", async (e) => {
+      e.preventDefault();
+      try {
+        await navigator.share({ title: "ギター占い", text: shareText, url: baseUrl });
+      } catch (_) { /* キャンセル時は何もしない */ }
+    });
+  }
+}
+
+// リンクをコピー
+const copyBtn = document.getElementById("copyLink");
+if (copyBtn) {
+  copyBtn.addEventListener("click", async () => {
+    const text = baseUrl;
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        // フォールバック（HTTPS以外や権限なし環境用）
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+      }
+      const old = copyBtn.textContent;
+      copyBtn.textContent = "コピーしました！";
+      setTimeout(() => (copyBtn.textContent = old), 1400);
+    } catch (err) {
+      alert("コピーに失敗しました");
+      console.error(err);
+    }
+  });
+}
+
 </script>
 </body>
 </html>
