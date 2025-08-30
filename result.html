@@ -144,6 +144,22 @@ if ($res) {
     </div>
   `;
   host.appendChild(card);
+  // ---- ここから「もっと詳しく占うなら」ブロック ----
+const promo = document.createElement("div");
+promo.className = "g-sec";
+promo.style.marginTop = "20px";
+promo.style.textAlign = "center";
+promo.innerHTML = `
+  <h3>🔮 もっと詳しく占うなら</h3>
+  <p>AIと統計学をベースにした、占髭聖ラジャの本格鑑定はこちらから</p>
+  <p>
+    <a href="https://twitter.com/senbiseiraja" target="_blank" class="btn">🕊️ Xで最新情報をチェック</a>
+    <a href="https://coconala.com/users/5422205" target="_blank" class="btn">🌙 ココナラ鑑定はこちら</a>
+  </p>
+`;
+host.appendChild(promo);
+// ---- ここまで ----
+
   // ---- 共有リンクとコピー機能 ----
 
 // 共有するURL（トップ＝index.html のある場所を想定）
